@@ -13,6 +13,8 @@
 #include <stdbool.h>
 #include <linux/types.h>
 
+typedef unsigned long           ulong;
+
 struct environment_s;
 
 /* Value for environment validity */
