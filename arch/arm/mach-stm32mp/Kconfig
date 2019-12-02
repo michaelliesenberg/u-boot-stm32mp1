@@ -147,5 +147,6 @@ config DEBUG_UART_CLOCK
 endif
 
 source "board/st/stm32mp1/Kconfig"
+source "board/dhelectronics/dh_stm32mp1/Kconfig"
 
 endif
