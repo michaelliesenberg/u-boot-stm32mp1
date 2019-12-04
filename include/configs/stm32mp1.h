@@ -36,6 +36,7 @@
  * Needed by "loadb"
  */
 #define CONFIG_SYS_LOAD_ADDR			STM32_DDR_BASE
+#define CONFIG_LOADADDR				0xd0000000
 
 /* ATAGs */
 #define CONFIG_CMDLINE_TAG
