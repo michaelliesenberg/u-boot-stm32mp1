@@ -9,6 +9,7 @@
 
 #include <dt-bindings/clock/stm32mp1-clksrc.h>
 #include "stm32mp157-u-boot.dtsi"
+#include "stm32mp15-ddr3-1x4Gb-1066-binG.dtsi"
 #include "stm32mp15-ddr3-2x4Gb-1066-binG.dtsi"
 
 / {
@@ -16,6 +17,7 @@
 	config {
 		u-boot,dm-pre-reloc;
 		#gpio-cells = <2>;
+		dh,ddr3-coding-gpios = <&gpiog 0 0>, <&gpiog 1 0>;
 		dh,som-coding-gpios = <&gpioz 7 0>, <&gpiof 3 0>;
 	};
 };
