@@ -230,7 +230,8 @@
 	STM32MP_DFU_ALT_RAM \
 	STM32MP_DFU_ALT_INFO \
 	BOOTENV \
-	"boot_net_usb_start=true\0"
+	"boot_net_usb_start=true\0" \
+	"usb_pgood_delay=200\0"
 
 #endif /* ifndef CONFIG_SPL_BUILD */
 #endif /* ifdef CONFIG_DISTRO_DEFAULTS*/
