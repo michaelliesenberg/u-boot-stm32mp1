@@ -51,6 +51,10 @@
 	};
 };
 
+&bsec {
+	u-boot,dm-spl;
+};
+
 &gpiof {
 	snor-nwp {
 		gpio-hog;
@@ -241,8 +245,9 @@
 	pll1: st,pll@0 {
 		compatible = "st,stm32mp1-pll";
 		reg = <0>;
-		cfg = < 2 80 0 0 0 PQR(1,0,0) >;
-		frac = < 0x800 >;
+		cfg-ac = < 2 80 0 0 0 PQR(1,0,0) >;
+		frac-ac = < 0x800 >;
+		cfg-df = < 2 99 0 0 0 PQR(1,0,0) >;
 		u-boot,dm-pre-reloc;
 	};
 
