@@ -4,6 +4,7 @@
  */
 
 #include <common.h>
+#include <asm/arch/sys_proto.h>
 #include <clk-uclass.h>
 #include <div64.h>
 #include <dm.h>
@@ -1457,6 +1458,12 @@ static void pll_csg(struct stm32mp1_clk_priv *priv, int pll_id, u32 *csg)
 	setbits_le32(priv->base + pll[pll_id].pllxcr, RCC_PLLNCR_SSCG_CTRL);
 }
 
+static __maybe_unused int stm32mp1_is_df(void)
+{
+	/* ID bit 7 is set on 15x{D,F}xx and not on 15x{A,C}xx */
+	return get_cpu_type() & BIT(7);
+}
+
 static  __maybe_unused int pll_set_rate(struct udevice *dev,
 					int pll_id,
 					int div_id,
@@ -1484,8 +1491,13 @@ static  __maybe_unused int pll_set_rate(struct udevice *dev,
 
 	ret = ofnode_read_u32_array(plloff, "cfg",
 				    pllcfg, PLLCFG_NB);
-	if (ret < 0)
-		return -FDT_ERR_NOTFOUND;
+	if (ret < 0) {
+		ret = ofnode_read_u32_array(plloff,
+				stm32mp1_is_df() ? "cfg-df" : "cfg-ac",
+				pllcfg, PLLCFG_NB);
+		if (ret < 0)
+			return -FDT_ERR_NOTFOUND;
+	}
 
 	fck_ref = pll_get_fref_ck(priv, pll_id);
 
@@ -1680,8 +1692,13 @@ static int stm32mp1_clktree(struct udevice *dev)
 		ret = ofnode_read_u32_array(plloff[i], "cfg",
 					    pllcfg[i], PLLCFG_NB);
 		if (ret < 0) {
-			debug("field cfg invalid: error %d\n", ret);
-			return -FDT_ERR_NOTFOUND;
+			ret = ofnode_read_u32_array(plloff[i],
+					stm32mp1_is_df() ? "cfg-df" : "cfg-ac",
+					pllcfg[i], PLLCFG_NB);
+			if (ret < 0) {
+				debug("field cfg invalid: error %d\n", ret);
+				return -FDT_ERR_NOTFOUND;
+			}
 		}
 	}
 
@@ -1776,6 +1793,11 @@ static int stm32mp1_clktree(struct udevice *dev)
 			continue;
 
 		fracv = ofnode_read_u32_default(plloff[i], "frac", 0);
+		if (!fracv) {
+			fracv = ofnode_read_u32_default(plloff[i],
+					stm32mp1_is_df() ? "frac-df" : "frac-ac",
+					0);
+		}
 		pll_config(priv, i, pllcfg[i], fracv);
 		ret = ofnode_read_u32_array(plloff[i], "csg", csg, PLLCSG_NB);
 		if (!ret) {
